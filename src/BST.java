@@ -1,8 +1,8 @@
 /**************************
- * @file Node.java
- * @brief This program implements a Comparable interface within a Binary Search Tree class
+ * @file BST.java
+ * @brief This program implements a Comparable interface within a generic Binary Search Tree class
  * @author John Kaelber
- * @date September 25, 2024
+ * @date September 26, 2024
  **************************/
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -95,7 +95,7 @@ public class BST <E extends Comparable<E>> implements Iterable<E> {
         else {return findHelp(rt.getRight(), key);}
     }
 
-    // Implement the iterator method (traversing in pre-order)
+    // Implement the iterator method - changing this to inorder (reread proj 1 part 1 needed ascending order so inorder traversal makes more sense)
     public Iterator<E> iterator() {
         return new BSTIterator();
     }
@@ -104,8 +104,13 @@ public class BST <E extends Comparable<E>> implements Iterable<E> {
         private Stack<Node<E>> stack;
         BSTIterator() {
             stack = new Stack<>();
-            if (root != null) {
-                stack.push(root); //pushing root node into stack first
+            pushLeft(root); //goes to the farthest left node by calling the pushLeft method
+        }
+        //pushLeft method for getting all left nodes and pushing into the stack
+        public void pushLeft(Node<E> rt) {
+            while(rt != null) {
+                stack.push(rt);
+                rt = rt.getLeft();
             }
         }
         @Override
@@ -120,13 +125,7 @@ public class BST <E extends Comparable<E>> implements Iterable<E> {
             }
 
             Node<E> mynode = stack.pop(); //pop current node from stack, then push the children if there are any
-
-            if (mynode.getRight() != null) { //push right child first, then left so left is first popped back off later
-                stack.push(mynode.getRight());
-            }
-            if (mynode.getLeft() != null) {
-                stack.push(mynode.getLeft());
-            }
+            pushLeft(mynode.getRight()); //now we get the right nodes and push them onto the stack
             return mynode.getElement();
         }
     }
